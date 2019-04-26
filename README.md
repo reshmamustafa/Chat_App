@@ -4,10 +4,10 @@ This is a simple chat application using Node.js and socket.io. The chat window e
 
 ### Prerequisites
 - Download the repo
-- Install Node.js 
+- Install Node.js and npm
 - Install the dependencies by running the command
 ```
-npm install
+npm install package.json
 ```
 ### Running the application
  ```
