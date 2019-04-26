@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+    <head lang="en">
+        <meta charset="UTF-8">
+    
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">   
+        <link rel="stylesheet" href="static/w3.css">
+	<script src="https://glcdn.githack.com/reshmamm/chat_application/raw/69f3f6d96c24f3ef154b1040bd21277ce04f63c7/static/malayalam.js" type="text/javascript"></script>
+        <link rel="icon" href="static/favicon.ico" type="image/ico" sizes="16x16">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+	<script src="https://npmcdn.com/js-alert/dist/jsalert.min.js"></script>
+
+        
+        <link href="static/bootstrap.min.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+
+        <style type="text/css">
+            .fixed-panel 
+            {
+                min-height: 480px;
+                max-height: 494px;
+                background-color: #19313c;
+                color: white;
+                overflow: auto;
+            }
+            .media-list 
+            {
+		width:80%;
+                overflow: auto;
+                clear: both;
+                display: table;
+                overflow-wrap: break-word;
+                word-wrap: break-word;
+                word-break: normal;
+                line-break: strict; 
+		list-style: none;
+		padding:10%;
+            }
+            .bottext
+            {
+                color: #A3E4D7;
+                text-align: right;schemefun
+                font-weight: bold;
+        
+            }
+            #vis-button{
+                cursor:pointer;
+            }
+            .usertext
+            {
+                color:#F8F9F9;
+                text-align: left;
+                font-weight: bold;
+            }
+            .panel 
+            {
+                margin-bottom: 30px;
+                margin-top: -5px;
+                margin-left: 480px;
+                margin-right: -435px;
+                background-color: #fff;
+                border: 6px solid transparent;
+                border-radius: 25px;
+                box-shadow: 0 1px 1px rgba(0,0,0,.05);
+            }
+            .panel-info 
+            {
+                border-color: #0c2735;
+            }
+            .panel-info>.panel-heading 
+            {
+                color: #fff;
+                font-size: 16px;
+                background-color: #0c2735;
+                border-color: #0c2735;
+            }
+            .panel-footer 
+            {
+                padding: 10px 15px;
+                background-color: #0c2735;
+                border-top: 1px solid #0c2735;
+                border-bottom-right-radius: 3px;
+                border-bottom-left-radius: 3px;
+            }
+            .txtheader 
+            {
+                text-align: center;
+            }
+            .visible 
+            {
+                visibility: visible;
+            }
+            .invisible 
+            {
+                visibility: hidden;
+            }
+            .popbt
+            {
+                background-color: transparent;
+                background-repeat:no-repeat;
+                border: none;
+                position: absolute;
+                right:    0;
+                bottom:   0;
+            }
+            .transparentbgbtn
+            {
+                background-color: transparent;
+                background-repeat:no-repeat;
+                border: none;
+                padding: 5px 10px;
+            }
+            .transparentbgbtn:hover 
+            {
+                background-color: #19313c;
+            }
+            .tab-class
+            {
+                border:1px solid #0c2735;
+                width:100%;
+                height:5px;
+            }
+            .tab-class,td,th
+            {
+                border:1px solid #0c2735;
+            }            
+            .txt-panel-inv
+            {
+                text-align: center;
+            }
+            /* Tooltip container */
+            .tooltip 
+            {
+            position: relative;
+            display: inline-block;
+            border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+            }
+</style>
+<script type="text/javascript">
+    function stopEnterKey(evt) {
+        var evt = (evt) ? evt : ((event) ? event : null);
+        var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
+        if ((evt.keyCode == 13) && (node.type == "text")) { return false; }
+    }
+    document.onkeypress = stopEnterKey;
+</script>
+    </head>
+    <body style="background-color: lightgrey;"><!-- style="overflow-y: hidden;overflow-x: hidden;">-->
+       <!--<div style="display: inline-block;"><img src="static/ICFOSS.svg" style="height: 236px;width: 336px;margin-left: -68px;
+margin-top: -88px;margin-bottom: -104px;"></div> -->
+        <div><h1 style="text-align: center;color: #21618C ;width:100%;">Malayalam Chatbot</h1></div>
+
+
+        <div id="vis-button" onclick="removeElement()"><span class="fa fa-comments" style="font-size:75px;color:#273746;text-align: center;position: fixed; bottom: 10px; right: 0; width: 100px;"></span>
+        </div> 
+
+                        <div id="chatPanel" class="panel panel-info" style="display:none;position: fixed;left: 38%;top: 2%;width: 24%;z-index:10">
+                            <div class="panel-heading">
+                                <table>
+                                    <tr>
+                                        <strong>
+                                            <td>
+                                                <i class="fa fa-comments" style="color:white; font-size: 20px"></i>
+                                            </td>
+                                            <td>
+                                                 നമസ്കാരം!
+                                            </td>
+                                        </strong>
+                                       
+                                
+                                        <td>
+                                            <button class="btn transparentbgbtn" type="button" id="close-button" onclick="window.location.href='/'" style="font-size: 25px;margin-left: 417%;" >&times;</button>
+                                        </td>                                
+                                    </tr>
+                                </table>
+                            </div>
+                            <div class="panel-body fixed-panel">
+                                <ul class="media-list" id="medialist">
+                                </ul>
+                            </div>
+                            <div class="panel-footer">
+                                <form method="post" id="chatbot-form">
+                                    <div class="input-group">
+					<span id="text_set">
+		                                <input type="text" class="form-control" placeholder="സന്ദേശം" name="messageText" id="messageText" onkeyup="myFunction(event)" autofocus/>
+		                                <span class="input-group-btn">
+		                                    <button class="btn btn-info" type="button" id="chatbot-form-btn" style="padding-top: 0px;padding-bottom: 6px;font-size: 18px;" onclick="textentry();">  &#10148;</button>
+<button class="btn btn-info" type="button" id="chatbot-lang-btn" style="padding-top: 0px;padding-bottom: 6px;font-size: 18px;" onclick="changeLang();">EN</button>
+		                                </span>
+					</span>
+					<div>
+					</div>
+                                    </div>
+                                </form>
+                            </div>
+                     </div>
+
+<script>
+	var lag_data = '';
+/*@function myFunctionMal(): function call on clicking button EN, enables English typing */
+function myFunctionMal(e){
+	e.preventDefault();
+	keycode = e.keyCode;
+        if(keycode == 13){
+         textentry();
+         $('#messageText').val('');
+        }
+}
+/*Language changing option - on button click 
+on clicking EN button the text entry facility changes to English language and button text becomes ML and vice versa with function triggers
+*/
+function changeLang(){
+$('#messageText').val('');
+var btn_text=$('#chatbot-lang-btn').text();
+
+if(btn_text=='ML'){
+  $('#messageText').attr('onkeyup','myFunction(event)');
+  $('#chatbot-lang-btn').text('EN');
+}
+else{
+$('#chatbot-lang-btn').text('ML');
+$('#messageText').attr('onkeyup','myFunctionMal(event)');
+}
+}
+/*
+@function myFunction(): Function for enabling Malayalam typing onkeyups
+*/
+	function myFunction(e) {
+        e.preventDefault();
+	keycode = e.keyCode;
+        if(keycode == 13){//Prevents form submission on return key press
+         textentry();
+         $('#messageText').val('');
+        }
+	    	var valid = 
+			(keycode > 47 && keycode < 58)   || // number keys
+			(keycode == 32 || keycode == 13)  || // spacebar & return key(s) (if you want to allow carriage returns)
+			(keycode > 64 && keycode < 91)   || // letter keys
+			(keycode > 95 && keycode < 112)  || // numpad keys
+			(keycode > 185 && keycode < 193) || // ;=,-./` (in order)
+			(keycode > 218 && keycode < 223);   // [\]' (in order)
+		if (valid){
+			var elem = document.getElementById('messageText')
+			var output = malayalam_f(lag_data,e.key)
+			elem.value = output
+			lag_data = output
+		}else if (keycode == 8){
+			 var elem = document.getElementById('messageText')
+			lag_data = elem.value
+		}else if (keycode != 16 ) {
+			lag_data = ''
+		}
+	}
+/*
+@Function removeElement(): For displaying and hiding the chatpanel
+*/
+            function removeElement() 
+            {
+                document.getElementById("chatPanel").style.display = "block";
+                document.getElementById("vis-button").style.display = "none";
+            }
+           
+	/*
+	var socket - client side of the http server io, io sever started in sever side which listens always to the socket
+	*/
+            var socket = io();
+            socket.on('welcome', function(data) {
+	   		console.log(data.message)
+		});
+   		socket.on('welcome', function(data) {
+			const chatPanel = document.getElementById("medialist");
+			el = document.createElement('li'),
+			el.innerHTML =data.id+':\t'+data.message;
+                        $(el).css("width","100%")
+                        $(el).css("text-align","left")
+                        $(el).css("text-decoration","none")
+			chatPanel.appendChild(el);
+			});
+	
+
+		function textentry(){
+		text = document.getElementById('messageText');
+    		const chatPanel = document.getElementById("medialist");
+		el = document.createElement('li'),
+                         $(el).css("width","100%")
+                         $(el).css("text-align","right")
+                         $(el).css("text-decoration","none")
+		chatPanel.appendChild(el);
+                socket.emit('message', socket.id, text.value);//Emitting textbox value to the severside(console printing)
+		socket.on('new_message', function(data) {
+			console.log("exmple:"+data)
+			const chatPanel = document.getElementById("medialist");
+			el = document.createElement('li'),
+			el.innerHTML =data.username+':\t'+data.message;
+                         $(el).css("width","100%")
+                         $(el).css("text-align","left")
+                         $(el).css("text-decoration","none")
+			chatPanel.appendChild(el);
+			el.innerHTML.empty()
+			});
+		}
+		
+        </script>
+    </body>
+</html>
